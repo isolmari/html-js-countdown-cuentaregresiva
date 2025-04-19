@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTS comeback</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* formato carrusel de fondo */
+        .fullscreen-carousel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .carousel-images {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            transition: transform 1.5s ease-in-out;
+        }
+        
+        .carousel-image {
+            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        
+        /*container principal con countdown */
+        .countdown-container {
+            background-color: transparent;
+            border: none;
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            margin: 20px;
+            position: relative;
+        }
+        
+        h1 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            text-align: center;
+        }
+        
+        .countdown {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .countdown-item {
+            text-align: center;
+            margin: 10px;
+            min-width: 100px;
+        }
+        
+        .countdown-number {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        
+        .countdown-label {
+            font-size: 1.1rem;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        
+        .event-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 300px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .event-image:hover {
+            transform: scale(1.02);
+        }
+        
+        /* musica de fondo */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .music-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .music-player button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin: 0 5px;
+            outline: none;
+        }
+        
+        .music-player button:hover {
+            color: #b388ff;
+        }
+        
+        .song-info {
+            color: white;
+            margin-left: 10px;
+            font-size: 0.9rem;
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* diseño responsivo countdown, musica y carrusel */
+        @media (max-width: 768px) {
+            .countdown-number {
+                font-size: 2rem;
+            }
+            
+            .countdown-label {
+                font-size: 0.9rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .countdown-item {
+                min-width: 80px;
+            }
+            
+            .countdown-container {
+                padding: 20px;
+                margin: 20px auto;
+            }
+            
+            .music-player {
+                bottom: 10px;
+                left: 10px;
+                padding: 8px 12px;
+            }
+            
+            .song-info {
+                max-width: 150px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .countdown-number {
+                font-size: 1.5rem;
+            }
+            
+            .countdown-label {
+                font-size: 0.7rem;
+            }
+            
+            h1 {
+                font-size: 1.4rem;
+            }
+            
+            .music-player {
+                transform: scale(0.9);
+                transform-origin: bottom left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- formato carrusel -->
+    <div class="fullscreen-carousel">
+        <div class="carousel-images" id="mainCarousel">
+        </div>
+    </div>
+    
+    <!-- formato cuenta regresiva -->
+    <div class="countdown-container">
+        <h1>BTS 군복무 종료 카운트다운</h1>
+        
+        <div class="countdown">
+            <div class="countdown-item">
+                <div class="countdown-number" id="days">00</div>
+                <div class="countdown-label">Días</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="hours">00</div>
+                <div class="countdown-label">Horas</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="minutes">00</div>
+                <div class="countdown-label">Minutos</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="seconds">00</div>
+                <div class="countdown-label">Segundos</div>
+            </div>
+        </div>
+        
+        <img src="bts.jpg" alt="BTS" class="event-image">
+    </div>
+
+    <!-- musica de fondo con archivos locales -->
+    <div class="music-player">
+        <div class="music-controls">
+            <button id="prevBtn">⏮</button>
+            <button id="playBtn">▶</button>
+            <button id="nextBtn">⏭</button>
+        </div>
+        <div class="song-info" id="songInfo">Not Playing</div>
+        <audio id="audioPlayer"></audio>
+    </div>
+
+    <script>
+        // formato de cuenta regresiva, se actualiza cada segundo
+        const eventDate = new Date(2025, 6, 21).getTime(); // 21 de julio 2025
+        
+        const countdown = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = eventDate - now;
+            
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerHTML = days.toString().padStart(2, '0');
+            document.getElementById("hours").innerHTML = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
+            
+            // fecha de fin cuenta regresiva
+            if (distance < 0) {
+                clearInterval(countdown);
+                document.getElementById("days").innerHTML = "00";
+                document.getElementById("hours").innerHTML = "00";
+                document.getElementById("minutes").innerHTML = "00";
+                document.getElementById("seconds").innerHTML = "00";
+                document.querySelector("h1").innerHTML = "¡BTS ha regresado!";
+            }
+        }, 1000);
+        
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // personalizacion del carrusel
+        function setupCarousel() {
+            const carousel = document.getElementById("mainCarousel");
+            if (!carousel) return;
+            
+            // imagenes locales 
+            const imageFiles = [
+                '1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '7.jpg', '8.jpg', '9.jpeg', '10.jpeg', '11.jpeg','12.jpeg','13.jpeg', '14.jpeg','15.jpeg','16.jpeg',
+                '17.jpeg', '18.jpeg', '19.jpeg','20.jpeg','21.jpeg','22.jpeg','23.jpeg'
+            ];
+            
+            // se muestran las imagenes en orden aleatorio
+            const shuffledImages = shuffleArray([...imageFiles]);
+            
+            shuffledImages.forEach(img => {
+                const imageElement = document.createElement('img');
+                imageElement.src = img;
+                imageElement.alt = 'BTS';
+                imageElement.className = 'carousel-image';
+                carousel.appendChild(imageElement);
+            });
+            
+            // crea un bucle cada vez que se reinicia el carrusel
+            const images = carousel.querySelectorAll('.carousel-image');
+            images.forEach(img => {
+                const clone = img.cloneNode(true);
+                carousel.appendChild(clone);
+            });
+            
+            let currentIndex = 0;
+            const imageWidth = 100;
+            
+            function moveCarousel() {
+                currentIndex = (currentIndex + 1) % shuffledImages.length;
+                const offset = -currentIndex * imageWidth;
+                carousel.style.transform = `translateX(${offset}%)`;
+            }
+            
+            // timer carrusel
+            moveCarousel();
+            setInterval(moveCarousel, 1700);
+        }
+        
+        // musica de fondo
+        function setupMusicPlayer() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const playBtn = document.getElementById('playBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const songInfo = document.getElementById('songInfo');
+            
+            // archivos locales demusica
+            const songs = [
+                { title: "For Youth", file: "ForYouth.mp3" },
+                { title: "Yet To Come", file: "ytc.mp3" },
+                { title: "Young Forever", file: "yf.mp3" }
+            ];
+            
+            let currentSongIndex = 0;
+            let isPlaying = false;
+            
+
+            function loadSong(index) {
+                if (index >= 0 && index < songs.length) {
+                    currentSongIndex = index;
+                    audioPlayer.src = songs[currentSongIndex].file;
+                    songInfo.textContent = songs[currentSongIndex].title;
+                    
+                    if (isPlaying) {
+                        audioPlayer.play().catch(e => console.log("Autoplay prevented:", e));
+                    }
+                }
+            }
+            
+            // configuracion del reproductor 
+            function togglePlay() {
+                if (isPlaying) {
+                    audioPlayer.pause();
+                    playBtn.textContent = "▶";
+                } else {
+                    audioPlayer.play().catch(e => console.log("Play prevented:", e));
+                    playBtn.textContent = "⏸";
+                }
+                isPlaying = !isPlaying;
+            }
+            
+
+            playBtn.addEventListener('click', togglePlay);
+            prevBtn.addEventListener('click', () => {
+                loadSong((currentSongIndex - 1 + songs.length) % songs.length);
+            });
+            nextBtn.addEventListener('click', () => {
+                loadSong((currentSongIndex + 1) % songs.length);
+            });
+            
+
+            audioPlayer.addEventListener('ended', () => {
+                loadSong((currentSongIndex + 1) % songs.length);
+            });
+            
+            loadSong(0);
+            
+            document.body.addEventListener('click', function initAudio() {
+                if (!isPlaying) {
+                    audioPlayer.play().then(() => {
+                        isPlaying = true;
+                        playBtn.textContent = "⏸";
+                    }).catch(e => console.log("Autoplay prevented:", e));
+                }
+                document.body.removeEventListener('click', initAudio);
+            }, { once: true });
+        }
+        
+        // muestra todos los elementos cuando la pagina carga
+        window.addEventListener('load', function() {
+            setupCarousel();
+            setupMusicPlayer();
+        });
+    </script>
+</body>
+</html>
